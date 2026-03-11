@@ -1,0 +1,28 @@
+name: Daily AI Briefing
+
+on:
+  schedule:
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+
+    - name: install python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: install packages
+      run: pip install requests
+
+    - name: run script
+      run: python briefing.py
+      env:
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}
