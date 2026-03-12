@@ -1,4 +1,4 @@
-name: Daily AI Briefing
+name: Morning Finance AI Briefing
 
 on:
   schedule:
@@ -6,23 +6,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-script:
+  briefing:
     runs-on: ubuntu-latest
 
     steps:
-    - name: checkout
-      uses: actions/checkout@v4
 
-    - name: install python
+    - uses: actions/checkout@v4
+
+    - name: Setup Python
       uses: actions/setup-python@v5
       with:
-        python-version: "3.11"
+        python-version: "3.10"
 
-    - name: install packages
-      run: pip install requests
+    - name: Install packages
+      run: pip install requests yfinance
 
-    - name: run script
-      run: python briefing.py
+    - name: Run briefing
       env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         CHAT_ID: ${{ secrets.CHAT_ID }}
+        NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+      run: python briefing.py
