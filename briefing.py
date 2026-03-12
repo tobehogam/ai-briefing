@@ -46,7 +46,7 @@ kr_market_text = get_stock_data(kr_tickers, is_kr=True)
 # 3. 제미나이 AI 세팅 (구글 검색 도구 탑재 필수!)
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
+    model_name="gemini-2.5-flash",
     tools='google_search_retrieval' 
 )
 
