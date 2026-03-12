@@ -58,7 +58,7 @@ for name,ticker in kr_tickers.items():
     #prev=round(hist["Close"].iloc[-2],0)
     if len(hist) >= 2:
     prev = round(hist["Close"].iloc[-2], 0)
-else:
+    else:
     prev = round(hist["Close"].iloc[-1], 0)
 
     change=round(price-prev,0)
