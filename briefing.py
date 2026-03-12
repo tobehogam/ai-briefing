@@ -55,7 +55,11 @@ for name,ticker in kr_tickers.items():
     hist=s.history(period="2d")
 
     price=round(hist["Close"].iloc[-1],0)
-    prev=round(hist["Close"].iloc[-2],0)
+    #prev=round(hist["Close"].iloc[-2],0)
+    if len(hist) >= 2:
+    prev = round(hist["Close"].iloc[-2], 0)
+else:
+    prev = round(hist["Close"].iloc[-1], 0)
 
     change=round(price-prev,0)
     pct=round((change/prev)*100,2)
