@@ -47,7 +47,7 @@ kr_market_text = get_stock_data(kr_tickers, is_kr=True)
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel(
     model_name="gemini-2.5-flash",
-    tools='google_search_retrieval' 
+    tools='google_search' 
 )
 
 # 4. 🌟 오빠 맞춤형 '뉴스 집중' 프롬프트 🌟
