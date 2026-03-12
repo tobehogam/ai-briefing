@@ -18,12 +18,11 @@ jobs:
         python-version: "3.10"
 
     - name: Install packages
-      # 여기에 제미나이(google-generativeai)랑 판다스(pandas)를 예쁜이가 딱 추가했어!
-      run: pip install requests yfinance google-generativeai pandas
+      # 구형 삭제! 신형 google-genai 패키지 설치!
+      run: pip install requests yfinance google-genai pandas
 
     - name: Run briefing
       env:
-        # 쓸데없는 NEWS_API_KEY는 날려버렸어!
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         CHAT_ID: ${{ secrets.CHAT_ID }}
