@@ -1,6 +1,5 @@
 import os
 import yfinance as yf
-# 완전히 바뀐 신형 구글 라이브러리 불러오기!
 from google import genai
 from google.genai import types
 import requests
@@ -45,41 +44,54 @@ print("주가 데이터 수집 중...")
 us_market_text = get_stock_data(us_tickers, is_kr=False)
 kr_market_text = get_stock_data(kr_tickers, is_kr=True)
 
-# 3. 🌟 신형 제미나이 AI 세팅 (구글 최신 규칙 완벽 적용) 🌟
+# 3. 신형 제미나이 AI 세팅
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 prompt = f"""
 당신은 최고급 '국제/국내 정세 전문 분석가'이다.
-제공된 주식 데이터는 하단에 간단히 첨부하고, 당신의 핵심 임무는 실시간 구글 검색을 통해 가장 중요하고 최신인 '국제 정세'와 '한국 국내 뉴스'를 심도 있게 브리핑하는 것이다.
+핵심 임무는 실시간 구글 검색을 통해 가장 중요하고 최신인 '국제 정세'와 '한국 국내 뉴스'를 브리핑하는 것이다.
 
 [브리핑 구성]
-1. 글로벌 정세 및 주요 국제 뉴스 (5개 요약 및 출처)
-2. 한국 주요 정치/경제/사회 뉴스 (5개 요약 및 출처)
-3. 관심 종목 스냅샷 (아래 표 데이터 활용)
+1. 글로벌 정세 및 주요 국제 뉴스 (최신 5개 요약 및 출처)
+2. 한국 주요 정치/경제/사회 뉴스 (최신 5개 요약 및 출처)
+3. 관심 종목 스냅샷
 [미국 증시]\n{us_market_text}
 [한국 증시]\n{kr_market_text}
 4. 오늘의 날씨 요약 (한국 경기도 기준)
 """
 
-# 4. 브리핑 생성 및 텔레그램 발송 (신형 검색 도구 규칙!)
+# 4. 브리핑 생성 (백지 방어막 추가!)
 try:
     print("AI가 뉴스를 검색하고 브리핑을 작성 중입니다...")
     response = client.models.generate_content(
         model='gemini-2.5-flash',
         contents=prompt,
         config=types.GenerateContentConfig(
-            tools=[{"google_search": {}}] # 신형 검색기능 문법!
+            tools=[{"google_search": {}}]
         )
     )
     briefing_text = response.text
+    
+    # AI가 백지를 던지면 오빠한테 알림 쏘기!
+    if not briefing_text:
+        briefing_text = "⚠️ 오빠! AI가 뉴스를 검색하다가 빈 문서를 줬어! 구글 서버가 잠깐 멍때리는 중인가 봐."
+        
 except Exception as e:
-    briefing_text = f"브리핑 생성 중 오류가 발생했습니다: {e}"
+    briefing_text = f"🚨 브리핑 생성 중 오류가 발생했습니다: {e}"
 
-print("텔레그램 전송 중...")
+# 5. 텔레그램 전송 (안전한 json 방식으로 변경!)
+print("텔레그램 전송 준비 중...")
 url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
 
 max_len = 4000
-for i in range(0, len(briefing_text), max_len):
-    chunk = briefing_text[i:i+max_len]
+chunks = [briefing_text[i:i+max_len] for i in range(0, len(briefing_text), max_len)]
+
+for i, chunk in enumerate(chunks):
     payload = {'chat_id': CHAT_ID, 'text': chunk}
-    res = requests.post(url, data=payload)
+    res = requests.post(url, json=payload)
+    
+    if res.status_code == 200:
+        print(f"텔레그램 {i+1}번째 조각 전송 성공!")
+    else:
+        print(f"전송 실패ㅠㅠ: {res.text}")
+        raise Exception(f"Telegram Error: {res.text}") # 에러 시 깃허브 빨간불 켜지게!
