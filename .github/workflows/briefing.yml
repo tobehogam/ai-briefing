@@ -2,6 +2,7 @@ name: Morning Finance AI Briefing
 
 on:
   schedule:
+    # 매일 한국 시간 오전 8시 (UTC 기준 23시)
     - cron: "0 23 * * *"
   workflow_dispatch:
 
@@ -18,8 +19,8 @@ jobs:
         python-version: "3.10"
 
     - name: Install packages
-      # 구형 삭제! 신형 google-genai 패키지 설치!
-      run: pip install requests yfinance google-genai pandas
+      # 한국 시간(KST) 적용을 위한 pytz 패키지 추가!
+      run: pip install requests yfinance google-genai pandas pytz
 
     - name: Run briefing
       env:
