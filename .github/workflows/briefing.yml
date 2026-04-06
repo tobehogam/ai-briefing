@@ -9,6 +9,9 @@ on:
 jobs:
   briefing:
     runs-on: ubuntu-latest
+    # 🚨 Node.js 20 경고 해결을 위해 선제적으로 Node.js 24 사용 강제 적용
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
     - uses: actions/checkout@v4
