@@ -2,8 +2,8 @@ name: Morning Finance AI Briefing
 
 on:
   schedule:
-    # 매일 한국 시간 오전 8시 (UTC 기준 23시)
-    - cron: "0 23 * * *"
+    # 한국 시간 오전 7시 17분 (UTC 22:17)으로 변경
+    - cron: "17 22 * * *"
   workflow_dispatch:
 
 jobs:
